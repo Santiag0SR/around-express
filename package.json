@@ -1,0 +1,31 @@
+{
+  "name": "around-express",
+  "version": "1.0.0",
+  "description": "Practicum project on servers: how to work with databases, learn to set up security and testing, as well as how to deploy the back end on a remote machine. The goal of all this is to create a server with an API and user authentication. ",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint .",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Santiag0SR/around-express.git"
+  },
+  "author": "Santiago Sánchez Romero",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Santiag0SR/around-express/issues"
+  },
+  "homepage": "https://github.com/Santiag0SR/around-express#readme",
+  "devDependencies": {
+    "eslint": "^8.9.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
