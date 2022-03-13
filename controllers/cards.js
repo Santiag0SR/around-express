@@ -27,8 +27,8 @@ const getCards = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  const { id } = req.params;
-  Card.findById(id)
+  const { cardId } = req.params;
+  Card.findById(cardId)
     .orFail(() => {
       const error = new Error('No card found for the specified id');
       error.statusCode = 404;
@@ -48,39 +48,39 @@ const deleteCard = (req, res) => {
     });
 };
 
-// const updateLike = (req, res, method) => {
-//   const { id } = req.params;
-//   Card.findByIdAndUpdate(
-//     id,
-//     { [method]: { likes: req.user._id } },
-//     { new: true } // get the card after the update
-//   )
-//     .orFail(() => {
-//       const error = new Error('No card found for the specified id');
-//       error.statusCode = 404;
-//       throw error;
-//     })
-//     .then((card) => {
-//       res.send({ data: card });
-//     })
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         res.status(400).send({ message: 'Invalid card id' });
-//       } else if (err.statusCode === 404) {
-//         res.status(404).send({ message: err.message });
-//       } else {
-//         res.status(500).send({ message: 'An error occurred' });
-//       }
-//     });
-// };
+const updateLike = (req, res, method) => {
+  const { cardId } = req.params;
+  Card.findByIdAndUpdate(
+    cardId,
+    { [method]: { likes: req.user._id } },
+    { new: true } // get the card after the update
+  )
+    .orFail(() => {
+      const error = new Error('No card found for the specified id');
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((card) => {
+      res.send({ data: card });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Invalid card id' });
+      } else if (err.statusCode === 404) {
+        res.status(404).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: 'An error occurred' });
+      }
+    });
+};
 
-// const likeCard = (req, res) => updateLike(req, res, '$addToSet');
-// const dislikeCard = (req, res) => updateLike(req, res, '$pull');
+const likeCard = (req, res) => updateLike(req, res, '$addToSet');
+const dislikeCard = (req, res) => updateLike(req, res, '$pull');
 
 module.exports = {
   getCards,
   createCard,
   deleteCard,
-  // likeCard,
-  // dislikeCard,
+  likeCard,
+  dislikeCard,
 };
