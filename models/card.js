@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -11,9 +12,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: [true, 'url required'],
     validate: {
-      validator(v) {
-        return v.match(/https?:\/\/[a-z A-Z \- \/ . 0-9 _]{1,}/gi);
-      },
+      validator: (v) => validator.isURL(v),
       message: 'Sorry. You have to enter a valid link for the picture',
     },
   },

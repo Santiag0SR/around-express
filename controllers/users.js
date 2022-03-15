@@ -27,11 +27,23 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  User.findById(req.params.id)
+  const { userId } = req.params;
+  User.findById(userId)
+    .orFail(() => {
+      const error = new Error('No card found for the specified id');
+      error.statusCode = 404;
+      throw error;
+    })
     .then((user) => res.send({ data: user }))
-    .catch(() =>
-      res.status(500).send({ message: 'An error occurred on the server' })
-    );
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Invalid card id' });
+      } else if (err.statusCode === 404) {
+        res.status(404).send({ message: err.message });
+      } else {
+        res.status(500).send({ message: 'An error occurred' });
+      }
+    });
 };
 
 const updateUser = (req, res) => {
