@@ -1,19 +1,26 @@
 const Card = require('../models/card');
+const {
+  OK,
+  CREATED,
+  BAD_REQUEST,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require('../utils/error');
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((card) => res.status(201).send({ data: card }))
+    .then((card) => res.status(CREATED).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({
-          message: `${Object.values(err.errors)
-            .map((error) => error.message)
-            .join(', ')}`,
+        res.status(BAD_REQUEST).send({
+          message: err.message,
         });
       } else {
-        res.status(500).send({ message: 'An error has ocurred on the server' });
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: 'An error has ocurred on the server' });
       }
     });
 };
@@ -22,7 +29,9 @@ const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
     .catch(() =>
-      res.status(500).send({ message: 'An error has ocurred on the server' })
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: 'An error has ocurred on the server' })
     );
 };
 
@@ -31,7 +40,7 @@ const deleteCard = (req, res) => {
   Card.findById(cardId)
     .orFail(() => {
       const error = new Error('No card found for the specified id');
-      error.statusCode = 404;
+      error.statusCode = NOT_FOUND;
       throw error;
     })
     .then((card) =>
@@ -39,11 +48,13 @@ const deleteCard = (req, res) => {
     )
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Invalid card id' });
-      } else if (err.statusCode === 404) {
-        res.status(404).send({ message: err.message });
+        res.status(BAD_REQUEST).send({ message: 'Invalid card id' });
+      } else if (err.statusCode === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: err.message });
       } else {
-        res.status(500).send({ message: 'An error occurred' });
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: 'An error occurred' });
       }
     });
 };
@@ -57,7 +68,7 @@ const updateLike = (req, res, method) => {
   )
     .orFail(() => {
       const error = new Error('No card found for the specified id');
-      error.statusCode = 404;
+      error.statusCode = BAD_REQUEST;
       throw error;
     })
     .then((card) => {
@@ -65,11 +76,13 @@ const updateLike = (req, res, method) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Invalid card id' });
-      } else if (err.statusCode === 404) {
-        res.status(404).send({ message: err.message });
+        res.status(BAD_REQUEST).send({ message: 'Invalid card id' });
+      } else if (err.statusCode === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: err.message });
       } else {
-        res.status(500).send({ message: 'An error occurred' });
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: 'An error occurred' });
       }
     });
 };
