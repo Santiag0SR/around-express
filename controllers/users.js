@@ -5,7 +5,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
-} = require('../utils/error');
+} = require('../utils/apploication_constants');
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -25,12 +25,8 @@ const createUser = (req, res) => {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch(() =>
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'An error has ocurred on the server' })
-    );
+    .then((users) => res.status(OK).send({ data: users }))
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'An error has ocurred on the server' }));
 };
 
 const getUser = (req, res) => {

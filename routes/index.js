@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { BAD_REQUEST } = require('../utils/error');
+const { BAD_REQUEST } = require('../utils/apploication_constants');
 
 const userRouter = require('./users');
 const cardRouter = require('./cards');

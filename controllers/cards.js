@@ -5,7 +5,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
-} = require('../utils/error');
+} = require('../utils/apploication_constants');
 
 const createCard = (req, res) => {
   const { name, link } = req.body;
@@ -27,12 +27,8 @@ const createCard = (req, res) => {
 
 const getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.send({ data: cards }))
-    .catch(() =>
-      res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: 'An error has ocurred on the server' })
-    );
+    .then((cards) => res.status(OK).send({ data: cards }))
+    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'An error has ocurred on the server' }));
 };
 
 const deleteCard = (req, res) => {
@@ -43,9 +39,7 @@ const deleteCard = (req, res) => {
       error.statusCode = NOT_FOUND;
       throw error;
     })
-    .then((card) =>
-      card.deleteOne(card).then((card) => res.send({ data: card }))
-    )
+    .then((cards) => Card.deleteOne(cards).then((card) => res.send({ data: card })))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Invalid card id' });
@@ -64,7 +58,7 @@ const updateLike = (req, res, method) => {
   Card.findByIdAndUpdate(
     cardId,
     { [method]: { likes: req.user._id } },
-    { new: true } // get the card after the update
+    { new: true }, // get the card after the update
   )
     .orFail(() => {
       const error = new Error('No card found for the specified id');
